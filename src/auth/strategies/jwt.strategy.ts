@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { AuthConfigService } from '../auth-config.service';
-import { DecodedToken } from '../auth.types';
+import { AuthenticatedUser, DecodedToken } from '../auth.types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(token: DecodedToken) {
-    const user = await this.messagingService.sendAsync<any, any>(
+    const user: AuthenticatedUser = await this.messagingService.sendAsync(
       'user.find-by',
       {
         id: token.sub

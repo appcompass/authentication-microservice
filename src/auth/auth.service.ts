@@ -5,7 +5,7 @@ import { MessagingService } from 'src/messaging/messaging.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { DecodedToken } from './auth.types';
+import { AuthenticatedUser, DecodedToken } from './auth.types';
 
 @Injectable()
 export class AuthService {
@@ -20,23 +20,29 @@ export class AuthService {
     return await bcrypt.hash(password, this.saltRounds);
   }
 
-  async validateUser(email: string, pass: string): Promise<any | null> {
-    const user = await this.messagingService.sendAsync<any, any>(
+  async validateUser(
+    email: string,
+    pass: string
+  ): Promise<AuthenticatedUser | null> {
+    const user: AuthenticatedUser = await this.messagingService.sendAsync(
       'user.find-by',
       {
         email,
         active: true
       }
     );
+
     if (!user) return null;
     if (await bcrypt.compare(pass, user.password)) return user;
     else return null;
   }
 
-  async login(user: any) {
+  async login(user: AuthenticatedUser) {
     const { id, email } = user;
-    const payload = { email, sub: id };
-    const token = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync({
+      email,
+      sub: id
+    });
     const decoded = this.jwtService.decode(token) as DecodedToken;
 
     await this.messagingService
@@ -45,18 +51,19 @@ export class AuthService {
         lastLogin: moment(),
         tokenExpiration: moment.unix(decoded.exp)
       })
-      .then(() => this.messagingService.emitAsync('user.login', true));
+      .then(() => this.messagingService.emitAsync('user.login', { id }));
 
     return { token };
   }
 
-  async logout(user: any) {
+  async logout(user: AuthenticatedUser) {
+    const { id } = user;
     await this.messagingService
       .sendAsync('user.update', {
-        id: user.id,
+        id,
         tokenExpiration: moment()
       })
-      .then(() => this.messagingService.emitAsync('user.logout', true));
+      .then(() => this.messagingService.emitAsync('user.logout', { id }));
 
     return { success: true };
   }
