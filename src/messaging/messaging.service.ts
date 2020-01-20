@@ -19,11 +19,19 @@ export class MessagingService {
     });
   }
 
-  send<R, I>(pattern: string, data?: I) {
+  send<R, I>(pattern: string, data: I) {
     return this.client.send<R, I>(pattern, data);
   }
 
-  sendAsync<R, I>(pattern: string, data?: I) {
-    return this.send<R, I>(pattern, data).toPromise();
+  sendAsync<R, I>(pattern: string, data: I) {
+    return this.client.send<R, I>(pattern, data).toPromise();
+  }
+
+  emit<R, I>(pattern: string, data: I) {
+    return this.client.emit<R, I>(pattern, data);
+  }
+
+  emitAsync<R, I>(pattern: string, data: I) {
+    return this.client.emit<R, I>(pattern, data).toPromise();
   }
 }

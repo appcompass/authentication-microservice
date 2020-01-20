@@ -24,7 +24,7 @@ export class AuthController {
     return await this.authService.logout(req.user);
   }
 
-  @MessagePattern('auth.public-key')
+  @MessagePattern('authentication.public-key')
   sendPublicKey() {
     return this.authConfigService.publicKey.toString();
   }
