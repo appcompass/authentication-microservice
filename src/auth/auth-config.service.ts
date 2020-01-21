@@ -11,12 +11,8 @@ export class AuthConfigService implements JwtOptionsFactory {
   public publicKey: Buffer;
 
   constructor(private readonly configService: ConfigService) {
-    this.publicKey = readFileSync(
-      `${configService.get('PWD')}/keys/public.pem`
-    );
-    this.privateKey = readFileSync(
-      `${configService.get('PWD')}/keys/private.pem`
-    );
+    this.publicKey = readFileSync(`${configService.get('PWD')}/keys/public.pem`);
+    this.privateKey = readFileSync(`${configService.get('PWD')}/keys/private.pem`);
   }
 
   createJwtOptions(): JwtModuleOptions {

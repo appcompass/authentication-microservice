@@ -10,19 +10,13 @@ import {
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import {
-  FastifyAdapter,
-  NestFastifyApplication
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter()
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const configService = app.get(ConfigService);
@@ -30,8 +24,7 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      exceptionFactory: (errors: ValidationError[]) =>
-        new UnprocessableEntityException(errors, 'Validation Error')
+      exceptionFactory: (errors: ValidationError[]) => new UnprocessableEntityException(errors, 'Validation Error')
     })
   );
 
@@ -52,9 +45,6 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservicesAsync();
-  await app.listen(
-    configService.get('SERVICE_PORT'),
-    configService.get('SERVICE_HOST')
-  );
+  await app.listen(configService.get('SERVICE_PORT'), configService.get('SERVICE_HOST'));
 }
 bootstrap();

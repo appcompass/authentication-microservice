@@ -11,26 +11,17 @@ import { AuthenticatedUser, DecodedToken } from './auth.types';
 export class AuthService {
   private saltRounds = 10;
 
-  constructor(
-    private readonly messagingService: MessagingService,
-    private readonly jwtService: JwtService
-  ) {}
+  constructor(private readonly messagingService: MessagingService, private readonly jwtService: JwtService) {}
 
   async setPassword(password): Promise<string> {
     return await bcrypt.hash(password, this.saltRounds);
   }
 
-  async validateUser(
-    email: string,
-    pass: string
-  ): Promise<AuthenticatedUser | null> {
-    const user: AuthenticatedUser = await this.messagingService.sendAsync(
-      'user.find-by',
-      {
-        email,
-        active: true
-      }
-    );
+  async validateUser(email: string, pass: string): Promise<AuthenticatedUser | null> {
+    const user: AuthenticatedUser = await this.messagingService.sendAsync('user.find-by', {
+      email,
+      active: true
+    });
 
     if (!user) return null;
     if (await bcrypt.compare(pass, user.password)) return user;

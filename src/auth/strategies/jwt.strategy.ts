@@ -10,10 +10,7 @@ import { AuthenticatedUser, DecodedToken } from '../auth.types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    readonly config: AuthConfigService,
-    readonly messagingService: MessagingService
-  ) {
+  constructor(readonly config: AuthConfigService, readonly messagingService: MessagingService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.publicKey.toString()
@@ -21,14 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(token: DecodedToken) {
-    const user: AuthenticatedUser = await this.messagingService.sendAsync(
-      'user.find-by',
-      {
-        id: token.sub
-      }
-    );
-    if (moment(user.tokenExpiration).isBefore(moment.unix(token.exp)))
-      return false;
+    const user: AuthenticatedUser = await this.messagingService.sendAsync('user.find-by', {
+      id: token.sub
+    });
+    if (moment(user.tokenExpiration).isBefore(moment.unix(token.exp))) return false;
 
     return user;
   }

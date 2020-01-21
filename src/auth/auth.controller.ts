@@ -7,10 +7,7 @@ import { AuthService } from './auth.service';
 
 @Controller()
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly authConfigService: AuthConfigService
-  ) {}
+  constructor(private readonly authService: AuthService, private readonly authConfigService: AuthConfigService) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
