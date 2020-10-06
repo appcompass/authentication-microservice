@@ -5,12 +5,12 @@
   "importStringConfiguration": {
     "tabSize": 2,
     "maximumNumberOfImportExpressionsPerLine": {
-      "count": 80,
+      "count": 120,
       "type": "newLineEachExpressionAfterCountLimitExceptIfOnlyOne"
     }
   },
   "sortConfiguration": {
-    "removeUnusedImports": false,
-    "removeUnusedDefaultImports": false
+    "removeUnusedImports": true,
+    "removeUnusedDefaultImports": true
   }
 }

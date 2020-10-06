@@ -19,7 +19,7 @@ export class AuthConfigService implements JwtOptionsFactory {
     return this.config;
   }
 
-  get config() {
+  get config(): JwtModuleOptions {
     return {
       publicKey: this.publicKey.toString(),
       privateKey: {
