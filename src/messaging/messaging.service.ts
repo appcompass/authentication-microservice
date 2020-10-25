@@ -8,9 +8,9 @@ export class MessagingService {
   private client: ClientProxy;
   constructor(private readonly configService: ConfigService) {
     this.client = ClientProxyFactory.create({
-      transport: Transport.REDIS,
+      transport: Transport.NATS,
       options: {
-        url: this.configService.get('REDIS_URL')
+        url: this.configService.get('NATS_URL')
       }
     });
   }

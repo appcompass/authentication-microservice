@@ -5,7 +5,7 @@ import { MessagingService } from 'src/messaging/messaging.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { AuthenticatedUser } from './auth.types';
+import { AuthenticatedUser, DecodedToken } from './auth.types';
 
 @Injectable()
 export class AuthService {
@@ -34,10 +34,9 @@ export class AuthService {
       email,
       sub: id
     });
-
-    this.messagingService.emit('user.login', { id, token });
-
-    return { token };
+    const decodedToken = this.jwtService.decode(token) as DecodedToken;
+    const { affected } = await this.messagingService.sendAsync('user.login', { id, decodedToken });
+    return affected ? { token } : { token: null };
   }
 
   async logout(user: AuthenticatedUser) {
@@ -47,7 +46,7 @@ export class AuthService {
         id,
         tokenExpiration: moment()
       })
-      .then(() => this.messagingService.emitAsync('user.logout', { id }));
+      .then(() => this.messagingService.sendAsync('user.logout', { id }));
 
     return { success: true };
   }

@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
-
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 
 export type EnvConfig = Record<string, string>;
 
@@ -10,6 +9,8 @@ export interface ValidConfig {
   SERVICE_HOST: string;
   SERVICE_PORT: number;
   REDIS_URL: string;
+  NATS_URL: string;
+  AMQP_QUEUE: string;
   AUTH_PASSPHRASE: string;
   AUTH_EXPIRES_IN: number;
   npm_package_name: string;
@@ -25,6 +26,7 @@ export class ConfigService {
     SERVICE_HOST: Joi.string().default('0.0.0.0'),
     SERVICE_PORT: Joi.number().default(3000),
     REDIS_URL: Joi.string().default('redis://localhost:6379'),
+    NATS_URL: Joi.string().default(['nats://localhost:4222']),
     AUTH_PASSPHRASE: Joi.string(),
     AUTH_EXPIRES_IN: Joi.number(),
     npm_package_name: Joi.string(),

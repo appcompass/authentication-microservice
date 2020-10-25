@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthConfigService } from './auth-config.service';
@@ -21,7 +21,7 @@ export class AuthController {
     return await this.authService.logout(req.user);
   }
 
-  @MessagePattern('authentication.public-key')
+  @EventPattern('authentication.public-key')
   sendPublicKey() {
     return this.authConfigService.publicKey.toString();
   }

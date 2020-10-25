@@ -38,9 +38,9 @@ async function bootstrap() {
   });
 
   app.connectMicroservice({
-    transport: Transport.REDIS,
+    transport: Transport.NATS,
     options: {
-      url: configService.get('REDIS_URL')
+      url: configService.get('NATS_URL')
     }
   });
 
