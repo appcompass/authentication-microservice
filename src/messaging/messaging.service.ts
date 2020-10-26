@@ -1,7 +1,7 @@
-import { ConfigService } from 'src/config/config.service';
-
 import { Injectable } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class MessagingService {

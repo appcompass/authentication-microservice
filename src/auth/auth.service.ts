@@ -1,10 +1,10 @@
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
-import { MessagingService } from 'src/messaging/messaging.service';
 
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { MessagingService } from '../messaging/messaging.service';
 import { AuthenticatedUser, DecodedToken } from './auth.types';
 
 @Injectable()
@@ -41,12 +41,10 @@ export class AuthService {
 
   async logout(user: AuthenticatedUser) {
     const { id } = user;
-    await this.messagingService
-      .sendAsync('user.update', {
-        id,
-        tokenExpiration: moment()
-      })
-      .then(() => this.messagingService.sendAsync('user.logout', { id }));
+    await this.messagingService.sendAsync('user.update', {
+      id,
+      tokenExpiration: moment()
+    });
 
     return { success: true };
   }
