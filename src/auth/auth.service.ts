@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, pass: string): Promise<AuthenticatedUser | null> {
-    const user: AuthenticatedUser = await this.messagingService.sendAsync('user.find-by', {
+    const user: AuthenticatedUser = await this.messagingService.sendAsync('users.user.find-by', {
       email,
       active: true
     });
@@ -35,13 +35,13 @@ export class AuthService {
       sub: id
     });
     const decodedToken = this.jwtService.decode(token) as DecodedToken;
-    const { affected } = await this.messagingService.sendAsync('user.login', { id, decodedToken });
+    const { affected } = await this.messagingService.sendAsync('users.user.login', { id, decodedToken });
     return affected ? { token } : { token: null };
   }
 
   async logout(user: AuthenticatedUser) {
     const { id } = user;
-    await this.messagingService.sendAsync('user.update', {
+    await this.messagingService.sendAsync('users.user.update', {
       id,
       tokenExpiration: moment()
     });
