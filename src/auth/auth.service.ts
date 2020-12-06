@@ -24,14 +24,19 @@ export class AuthService {
     });
 
     if (!user) return null;
-    if (await bcrypt.compare(pass, user.password)) return user;
-    else return null;
+    if (await bcrypt.compare(pass, user.password)) {
+      user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
+        userId: user.id
+      });
+      return user;
+    } else return null;
   }
 
   async login(user: AuthenticatedUser) {
-    const { id, email } = user;
+    const { id, email, permissions } = user;
     const token = await this.jwtService.signAsync({
       email,
+      permissions,
       sub: id
     });
     const decodedToken = this.jwtService.decode(token) as DecodedToken;

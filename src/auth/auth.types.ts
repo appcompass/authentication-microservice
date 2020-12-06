@@ -10,6 +10,7 @@ export type AuthenticatedUser = {
   email: string;
   password: string;
   active: boolean;
+  permissions: string[];
   activationCode: string;
   activatedAt: string;
   lastLogin: string;
