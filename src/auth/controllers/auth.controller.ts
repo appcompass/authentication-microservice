@@ -2,8 +2,8 @@ import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 
-import { AuthConfigService } from './auth-config.service';
-import { AuthService } from './auth.service';
+import { AuthConfigService } from '../auth-config.service';
+import { AuthService } from '../services/auth.service';
 
 @Controller()
 export class AuthController {

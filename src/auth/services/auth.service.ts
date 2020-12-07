@@ -4,8 +4,8 @@ import * as moment from 'moment';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { MessagingService } from '../messaging/messaging.service';
-import { AuthenticatedUser, DecodedToken } from './auth.types';
+import { MessagingService } from '../../messaging/messaging.service';
+import { AuthenticatedUser, DecodedToken } from '../auth.types';
 
 @Injectable()
 export class AuthService {
@@ -33,10 +33,12 @@ export class AuthService {
   }
 
   async login(user: AuthenticatedUser) {
-    const { id, email, permissions } = user;
+    const { id, email, lastLogin, permissions } = user;
     const token = await this.jwtService.signAsync({
-      email,
+      id,
       permissions,
+      email,
+      lastLogin,
       sub: id
     });
     const decodedToken = this.jwtService.decode(token) as DecodedToken;
