@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 
 import { AppService } from './app.service';
 
@@ -8,7 +8,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('status')
-  @MessagePattern('authentication.status')
+  @EventPattern('authentication.status')
   getServiceStatus() {
     return this.appService.getStatus();
   }

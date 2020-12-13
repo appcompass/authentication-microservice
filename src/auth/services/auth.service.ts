@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { MessagingService } from '../../messaging/messaging.service';
@@ -11,7 +11,13 @@ import { AuthenticatedUser, DecodedToken } from '../auth.types';
 export class AuthService {
   private saltRounds = 10;
 
-  constructor(private readonly messagingService: MessagingService, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly messagingService: MessagingService,
+    private readonly jwtService: JwtService
+  ) {
+    this.logger.setContext('AuthService');
+  }
 
   async setPassword(password): Promise<string> {
     return await bcrypt.hash(password, this.saltRounds);
@@ -42,8 +48,14 @@ export class AuthService {
       sub: id
     });
     const decodedToken = this.jwtService.decode(token) as DecodedToken;
-    const { affected } = await this.messagingService.sendAsync('users.user.login', { id, decodedToken });
-    return affected ? { token } : { token: null };
+    const payload = {
+      id,
+      lastLogin: moment(),
+      tokenExpiration: moment.unix(decodedToken.exp)
+    };
+    this.messagingService.sendAsync('users.user.update', payload);
+    this.logger.log(`Login from User Id: ${id}`);
+    return { token };
   }
 
   async logout(user: AuthenticatedUser) {
@@ -52,6 +64,7 @@ export class AuthService {
       id,
       tokenExpiration: moment()
     });
+    this.logger.log(`Logout from User Id: ${id}`);
 
     return { success: true };
   }
