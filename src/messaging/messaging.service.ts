@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 
-import { ConfigService } from '../config/config.service';
+import { MessagingConfigService } from './messaging.config';
 
 @Injectable()
 export class MessagingService {
   private client: ClientProxy;
-  constructor(private readonly configService: ConfigService) {
-    this.client = ClientProxyFactory.create({
-      transport: Transport.NATS,
-      options: {
-        url: this.configService.get('NATS_URL')
-      }
-    });
+  constructor(private readonly configService: MessagingConfigService) {
+    this.client = ClientProxyFactory.create(this.configService.config);
   }
 
   send<R, I>(pattern: string, data: I) {

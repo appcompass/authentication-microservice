@@ -10,12 +10,12 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
+import { MessagingConfigService } from './messaging/messaging.config';
 
 Error.stackTraceLimit = Infinity;
 
@@ -24,6 +24,8 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const configService = app.get(ConfigService);
+  const messagingConfigService = app.get(MessagingConfigService);
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -56,10 +58,10 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'validator.swagger.io'],
-          scriptSrc: ["'self'", "https: 'unsafe-inline'"]
+          defaultSrc: ['"self"'],
+          styleSrc: ['"self"', '"unsafe-inline"'],
+          imgSrc: ['"self"', 'data:', 'validator.swagger.io'],
+          scriptSrc: ['"self"', 'https: "unsafe-inline"']
         }
       }
     })
@@ -71,13 +73,7 @@ async function bootstrap() {
     })
   );
 
-  app.connectMicroservice({
-    transport: Transport.NATS,
-    options: {
-      url: configService.get('NATS_URL'),
-      queue: 'authentication'
-    }
-  });
+  app.connectMicroservice(messagingConfigService.config);
 
   await app.startAllMicroservicesAsync();
   await app.listen(configService.get('SERVICE_PORT'), configService.get('SERVICE_HOST'));
