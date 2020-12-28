@@ -35,7 +35,7 @@
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
     "express-rate-limit": "^5.2.3",
-    "helmet": "^4.2.0",
+    "helmet": "^4.3.1",
     "joi": "^17.3.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
