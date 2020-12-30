@@ -6,7 +6,7 @@ const arg = process.argv[process.argv.length - 1].trim();
 const parsedArg = Object.fromEntries([arg.split(':')]);
 
 const validator = Joi.object({
-  generate: Joi.string().valid('keys', 'dotenv')
+  generate: Joi.string().valid('keys')
 });
 
 const { error } = validator.validate({ ...parsedArg });
@@ -33,22 +33,18 @@ const commands = {
       }
     });
 
-    console.log('Passphrase: ', passphrase);
-
     writeFileSync(`${__dirname}/keys/public.pem`, publicKey);
     writeFileSync(`${__dirname}/keys/private.pem`, privateKey);
 
     console.log('private and public keys created.');
-  },
-  'generate:dotenv': () => {
-    const passphrase = randomBytes(256 / 8).toString('hex');
+
     const localEnvFile = `SERVICE_PORT=3000\nAUTH_PASSPHRASE=${passphrase}\nAUTH_EXPIRES_IN=86400`;
 
     writeFileSync(`${__dirname}/local.env`, localEnvFile);
 
-    console.log('Passphrase: ', passphrase);
-
     console.log('local.env file created.');
+
+    console.log('Passphrase: ', passphrase);
   }
 };
 
