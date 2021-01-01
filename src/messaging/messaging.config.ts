@@ -11,8 +11,8 @@ export class MessagingConfigService {
     return {
       transport: Transport.NATS,
       options: {
-        url: this.configService.get('NATS_URL'),
-        queue: 'authentication'
+        url: this.configService.get('natsUrl'),
+        queue: this.configService.get('natsQueue')
       }
     };
   }

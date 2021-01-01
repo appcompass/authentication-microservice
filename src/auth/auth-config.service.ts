@@ -1,5 +1,3 @@
-import { readFileSync } from 'fs';
-
 import { Injectable } from '@nestjs/common';
 import { JwtModuleOptions, JwtOptionsFactory } from '@nestjs/jwt';
 
@@ -7,13 +5,7 @@ import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class AuthConfigService implements JwtOptionsFactory {
-  private privateKey: Buffer;
-  public publicKey: Buffer;
-
-  constructor(private readonly configService: ConfigService) {
-    this.publicKey = readFileSync(`${configService.get('PWD')}/keys/public.pem`);
-    this.privateKey = readFileSync(`${configService.get('PWD')}/keys/private.pem`);
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   createJwtOptions(): JwtModuleOptions {
     return this.config;
@@ -21,9 +13,9 @@ export class AuthConfigService implements JwtOptionsFactory {
 
   get config(): JwtModuleOptions {
     return {
-      publicKey: this.publicKey.toString(),
+      publicKey: this.publicKey,
       privateKey: {
-        key: this.privateKey.toString(),
+        key: this.privateKey,
         passphrase: this.passphrase
       },
       signOptions: {
@@ -33,11 +25,16 @@ export class AuthConfigService implements JwtOptionsFactory {
     };
   }
 
-  get expiresIn() {
-    return this.configService.get('AUTH_EXPIRES_IN');
+  get publicKey() {
+    return this.configService.get('publicKey');
   }
-
+  get privateKey() {
+    return this.configService.get('privateKey');
+  }
   get passphrase() {
-    return this.configService.get('AUTH_PASSPHRASE');
+    return this.configService.get('passphrase');
+  }
+  get expiresIn() {
+    return this.configService.get('authExpiresIn');
   }
 }

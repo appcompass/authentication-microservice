@@ -1,12 +1,12 @@
 import { generateKeyPairSync, randomBytes } from 'crypto';
-import { writeFileSync } from 'fs';
 import * as Joi from 'joi';
+import * as vault from 'node-vault';
 
 const arg = process.argv[process.argv.length - 1].trim();
 const parsedArg = Object.fromEntries([arg.split(':')]);
 
 const validator = Joi.object({
-  generate: Joi.string().valid('keys')
+  generate: Joi.string().valid('secrets')
 });
 
 const { error } = validator.validate({ ...parsedArg });
@@ -14,9 +14,8 @@ const { error } = validator.validate({ ...parsedArg });
 if (error) {
   throw new Error(`validation error: ${error.message}`);
 }
-
 const commands = {
-  'generate:keys': () => {
+  'generate:secrets': async () => {
     const passphrase = randomBytes(256 / 8).toString('hex');
 
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
@@ -32,19 +31,52 @@ const commands = {
         passphrase
       }
     });
+    const client = vault({
+      token: process.env.VAULT_ADMIN_TOKEN
+    });
 
-    writeFileSync(`${__dirname}/keys/public.pem`, publicKey);
-    writeFileSync(`${__dirname}/keys/private.pem`, privateKey);
-
-    console.log('private and public keys created.');
-
-    const localEnvFile = `SERVICE_PORT=3000\nAUTH_PASSPHRASE=${passphrase}\nAUTH_EXPIRES_IN=86400`;
-
-    writeFileSync(`${__dirname}/local.env`, localEnvFile);
-
-    console.log('local.env file created.');
-
-    console.log('Passphrase: ', passphrase);
+    await Promise.all([
+      client
+        .write('secret/service/shared/authenticationServiceHost', {
+          value: '0.0.0.0'
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/shared/authenticationServicePort', {
+          value: 3000
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/shared/natsUrl', {
+          value: 'nats://localhost:4222'
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/shared/publicKey', {
+          value: publicKey
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/authentication/natsQueue', {
+          value: 'authentication'
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/authentication/privateKey', {
+          value: privateKey
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/authentication/passphrase', {
+          value: passphrase
+        })
+        .catch(console.error),
+      client
+        .write('secret/service/authentication/authExpiresIn', {
+          value: 86400
+        })
+        .catch(console.error)
+    ]).then(() => console.log('secrets set'));
   }
 };
 
