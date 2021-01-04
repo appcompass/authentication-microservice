@@ -1,8 +1,17 @@
 {
   "name": "authentication-microservice",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "AppCompass Authentication Service",
+  "author": "Jubair Saidi",
+  "repository": "github:appcompass/authentication-microservice",
+  "homepage": "https://github.com/appcompass/authentication-microservice",
+  "bugs": {
+    "url" : "https://github.com/appcompass/authentication-microservice/issues"
+  },
+  "funding": {
+    "type" : "patreon",
+    "url" : "https://www.patreon.com/jubeizon"
+  },
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
@@ -13,7 +22,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint '*/**/*.{js,ts}'",
     "deps:check": "depcruise --validate .dependency-cruiser.json src",
     "test": "jest",
@@ -52,7 +61,6 @@
     "@nestjs/cli": "^7.5.4",
     "@nestjs/schematics": "^7.2.5",
     "@nestjs/testing": "^7.6.4",
-    "@types/dotenv": "^8.2.0",
     "@types/express-serve-static-core": "^4.17.17",
     "@types/jest": "^26.0.19",
     "@types/joi": "^14.3.4",
