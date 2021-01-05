@@ -16,8 +16,6 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "generate:keys": "ts-node setup.ts generate:keys",
-    "generate:dotenv": "ts-node setup.ts generate:dotenv",
     "format": "eslint '*/**/*.{js,ts}' --quiet --fix",
     "start": "nest start",
     "start:dev": "nest start --watch",
