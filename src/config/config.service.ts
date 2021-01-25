@@ -1,5 +1,7 @@
 import * as Joi from 'joi';
 
+import { VaultConfig } from './vault.utils';
+
 export type EnvConfig = Record<string, string>;
 
 export interface ValidConfig {
@@ -20,6 +22,7 @@ export interface ValidConfig {
 
 export class ConfigService {
   private readonly config: ValidConfig;
+  public vault: VaultConfig;
   private schema: Joi.ObjectSchema = Joi.object({
     NODE_ENV: Joi.string().default('local'),
     PWD: Joi.string(),
@@ -38,6 +41,7 @@ export class ConfigService {
 
   constructor(config: EnvConfig) {
     this.config = this.validate({ ...process.env, ...config });
+    this.vault = new VaultConfig();
   }
 
   private validate(config: EnvConfig): ValidConfig {

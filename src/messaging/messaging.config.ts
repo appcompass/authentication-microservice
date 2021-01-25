@@ -7,7 +7,7 @@ import { ConfigService } from '../config/config.service';
 export class MessagingConfigService {
   constructor(private readonly configService: ConfigService) {}
 
-  get config(): ClientOptions {
+  get eventsConfig(): ClientOptions {
     return {
       transport: Transport.NATS,
       options: {
@@ -15,5 +15,9 @@ export class MessagingConfigService {
         queue: this.configService.get('natsQueue')
       }
     };
+  }
+
+  async getServiceUrl(name: string) {
+    return await this.configService.vault.getServiceUrl(name);
   }
 }
