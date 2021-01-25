@@ -16,7 +16,7 @@ export class AuthService {
     private readonly messagingService: MessagingService,
     private readonly jwtService: JwtService
   ) {
-    this.logger.setContext('AuthService');
+    this.logger.setContext(this.constructor.name);
   }
 
   async setPassword(password): Promise<string> {
@@ -28,7 +28,6 @@ export class AuthService {
       email,
       active: true
     });
-
     if (!user) return null;
     if (await bcrypt.compare(pass, user.password)) {
       user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
@@ -53,7 +52,7 @@ export class AuthService {
       lastLogin: moment(),
       tokenExpiration: moment.unix(decodedToken.exp)
     };
-    this.messagingService.sendAsync('users.user.update', payload);
+    await this.messagingService.sendAsync('users.user.update', payload);
     this.logger.log(`Login from User Id: ${id}`);
     return { token };
   }
