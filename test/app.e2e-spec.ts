@@ -2,16 +2,24 @@ import * as request from 'supertest';
 
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppModule } from '../src/app.module';
+import { AppController } from '../src/app.controller';
+import { AppService } from '../src/app.service';
+import { AppServiceMock } from '../src/app.service.mock';
 
+// TODO: Update to mock backend services, not app functionality.
 describe('AppController (e2e)', () => {
   let app;
   process.env.npm_package_gitHead = 'test';
   process.env.npm_package_version = '0.0.0';
 
   beforeEach(async () => {
+    const AppServiceProvider = {
+      provide: AppService,
+      useClass: AppServiceMock
+    };
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule]
+      controllers: [AppController],
+      providers: [AppServiceProvider]
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -20,8 +28,11 @@ describe('AppController (e2e)', () => {
 
   it('/status (GET)', () =>
     request(app.getHttpServer()).get('/status').expect(200).expect({
-      serviceName: 'authentication-microservice',
-      gitHash: 'test',
-      version: '0.0.0'
+      gitHash: 'testGitHash',
+      serviceName: 'testServiceName',
+      version: 'testVersion'
+      // serviceName: 'authentication-microservice',
+      // gitHash: 'test',
+      // version: '0.0.0'
     }));
 });
