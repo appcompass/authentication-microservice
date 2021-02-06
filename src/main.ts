@@ -76,6 +76,6 @@ async function bootstrap() {
   app.connectMicroservice(messagingConfigService.eventsConfig);
 
   await app.startAllMicroservicesAsync();
-  await app.listen(configService.get('servicePort'), configService.get('serviceHost'));
+  await app.listen(configService.get('servicePort'));
 }
 bootstrap();
