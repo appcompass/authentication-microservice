@@ -17,14 +17,22 @@ export class MessagingService {
     this.reqClient.defaults.headers.common['X-API-KEY'] = 'foo';
   }
 
-  send<R, I>(pattern: string, data: I) {
-    return from(this.sendAsync<R, I>(pattern, data));
+  sendHttp<R, I>(pattern: string, data: I) {
+    return from(this.sendHttpAsync<R, I>(pattern, data));
   }
 
-  async sendAsync<R, I>(pattern: string, payload: I) {
+  async sendHttpAsync<R, I>(pattern: string, payload: I) {
     const url = await this.getUrl(pattern);
     const { data } = await this.reqClient.post<I, AxiosResponse<R>>(url, payload);
     return data;
+  }
+
+  send<R, I>(pattern: string, data: I) {
+    return this.eventsClient.send<R, I>(pattern, data);
+  }
+
+  async sendAsync<R, I>(pattern: string, payload: I) {
+    return this.eventsClient.send<R, I>(pattern, payload).toPromise();
   }
 
   emit<R, I>(pattern: string, data: I) {

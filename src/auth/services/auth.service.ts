@@ -28,7 +28,7 @@ export class AuthService {
       email,
       active: true
     });
-    if (!user) return null;
+    if (!user || !user.password) return null;
     if (await bcrypt.compare(pass, user.password)) {
       user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
         userId: user.id
