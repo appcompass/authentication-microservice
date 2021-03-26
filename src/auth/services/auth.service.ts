@@ -37,6 +37,19 @@ export class AuthService {
     } else return null;
   }
 
+  async loginById(id: number) {
+    const user: AuthenticatedUser = await this.messagingService.sendAsync('users.user.find-by', {
+      id,
+      active: true
+    });
+    if (!user || !user.id) return null;
+    user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
+      userId: user.id
+    });
+
+    return this.login(user);
+  }
+
   async login(user: AuthenticatedUser) {
     const { id, email, lastLogin, permissions } = user;
     const token = await this.jwtService.signAsync({

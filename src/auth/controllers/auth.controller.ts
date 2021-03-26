@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthConfigService } from '../auth-config.service';
@@ -21,6 +21,11 @@ export class AuthController {
   @Get('logout')
   async logout(@Request() req) {
     return await this.authService.logout(req.user);
+  }
+
+  @MessagePattern('authentication.user.login-by-id')
+  async loginUserById(@Payload() userId: number) {
+    return await this.authService.loginById(userId);
   }
 
   @EventPattern('authentication.user.logout')

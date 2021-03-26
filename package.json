@@ -21,6 +21,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "setup:secrets": "ts-node src/setup.ts secrets:init",
+    "setup:db": "echo 'no db required for this service'",
     "lint": "eslint '*/**/*.{js,ts}'",
     "deps:check": "depcruise --validate .dependency-cruiser.json src",
     "test": "jest",
