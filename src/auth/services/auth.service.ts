@@ -30,7 +30,7 @@ export class AuthService {
     });
     if (!user || !user.password) return null;
     if (await bcrypt.compare(pass, user.password)) {
-      user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
+      user.permissions = await this.messagingService.sendAsync('authorization.user.get-permission-names', {
         userId: user.id
       });
       return user;
@@ -43,7 +43,7 @@ export class AuthService {
       active: true
     });
     if (!user || !user.id) return null;
-    user.permissions = await this.messagingService.sendAsync('authorization.user.get-permissions', {
+    user.permissions = await this.messagingService.sendAsync('authorization.user.get-permission-names', {
       userId: user.id
     });
 
