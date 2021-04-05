@@ -1,0 +1,6 @@
+export DIGITALOCEAN_TOKEN=token
+export PKR_VAR_do_token=$DIGITALOCEAN_TOKEN
+
+export PKR_VAR_region="nyc1"
+export PKR_VAR_base_system_image="ubuntu-20-04-x64"
+export PKR_VAR_server_size="s-1vcpu-1gb"
