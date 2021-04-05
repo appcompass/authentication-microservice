@@ -1,0 +1,28 @@
+export SERVICE_NAME=authentication
+
+export DIGITALOCEAN_TOKEN=token
+export DIGITALOCEAN_SPACE_ACCESS_KEY=accessKey
+export DIGITALOCEAN_SPACE_SECRET_KEY=secretKey
+export TERRAFORM_DIGITALOCEAN_SPACE_KEY=terraform/space/path.tfstate
+export TERRAFORM_DIGITALOCEAN_ENDPOINT=https://nyc3.digitaloceanspaces.com
+export TERRAFORM_DIGITALOCEAN_REGION=us-east-1
+export TERRAFORM_DIGITALOCEAN_BUCKET=infra-bucket
+
+export VAULT_TOKEN=serverAdminVaultToken
+
+export GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1` || echo 'latest')
+
+export AWS_ACCESS_KEY_ID=$DIGITALOCEAN_SPACE_ACCESS_KEY
+export AWS_SECRET_ACCESS_KEY=$DIGITALOCEAN_SPACE_SECRET_KEY
+
+export PKR_VAR_do_token=$DIGITALOCEAN_TOKEN
+
+export TF_VAR_service_instance_name="$SERVICE_NAME-$GIT_TAG"
+
+export TF_VAR_build_version=$GIT_TAG
+export TF_VAR_service_name=$SERVICE_NAME
+
+export TF_VAR_do_token=$DIGITALOCEAN_TOKEN
+export TF_VAR_space_access_key=$DIGITALOCEAN_SPACE_ACCESS_KEY
+export TF_VAR_space_secret_key=$DIGITALOCEAN_SPACE_SECRET_KEY
+export TF_VAR_vault_admin_token=$VAULT_TOKEN
