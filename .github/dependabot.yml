@@ -1,0 +1,151 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.24
+    - 14.14.25
+    - 14.14.26
+    - 14.14.28
+    - 14.14.30
+    - 14.14.31
+    - 14.14.32
+    - 14.14.33
+    - 14.14.34
+    - 14.14.35
+    - 14.14.36
+    - 14.14.37
+    - 14.14.39
+    - 14.14.41
+    - 15.0.0
+  - dependency-name: ts-loader
+    versions:
+    - 8.0.15
+    - 8.0.16
+    - 8.0.17
+    - 8.1.0
+    - 9.0.0
+    - 9.1.0
+  - dependency-name: "@typescript-eslint/parser"
+    versions:
+    - 4.14.1
+    - 4.14.2
+    - 4.15.0
+    - 4.15.1
+    - 4.21.0
+    - 4.22.0
+  - dependency-name: dependency-cruiser
+    versions:
+    - 9.22.0
+    - 9.23.0
+    - 9.23.2
+    - 9.23.3
+    - 9.24.0
+    - 9.25.0
+    - 9.25.1
+  - dependency-name: "@typescript-eslint/eslint-plugin"
+    versions:
+    - 4.14.1
+    - 4.14.2
+    - 4.15.1
+    - 4.15.2
+    - 4.16.1
+    - 4.17.0
+    - 4.18.0
+    - 4.19.0
+    - 4.21.0
+    - 4.22.0
+  - dependency-name: eslint
+    versions:
+    - 7.23.0
+    - 7.24.0
+  - dependency-name: typescript
+    versions:
+    - 4.2.4
+  - dependency-name: nats
+    versions:
+    - 2.0.0
+    - 2.0.1
+    - 2.0.2
+  - dependency-name: "@types/supertest"
+    versions:
+    - 2.0.11
+  - dependency-name: "@nestjs/schematics"
+    versions:
+    - 7.3.1
+  - dependency-name: rxjs
+    versions:
+    - 6.6.7
+  - dependency-name: "@nestjs/cli"
+    versions:
+    - 7.5.5
+    - 7.5.6
+    - 7.6.0
+  - dependency-name: "@nestjs/microservices"
+    versions:
+    - 7.6.11
+    - 7.6.12
+    - 7.6.13
+    - 7.6.14
+    - 7.6.15
+    - 7.6.7
+    - 7.6.8
+    - 7.6.9
+  - dependency-name: node-notifier
+    versions:
+    - 8.0.1
+    - 8.0.2
+  - dependency-name: eslint-config-prettier
+    versions:
+    - 8.0.0
+    - 8.1.0
+  - dependency-name: "@types/passport-jwt"
+    versions:
+    - 3.0.5
+  - dependency-name: lodash
+    versions:
+    - 4.17.21
+  - dependency-name: express-rate-limit
+    versions:
+    - 5.2.5
+    - 5.2.6
+  - dependency-name: class-transformer
+    versions:
+    - 0.4.0
+  - dependency-name: "@nestjs/platform-express"
+    versions:
+    - 7.6.11
+    - 7.6.12
+    - 7.6.7
+    - 7.6.8
+    - 7.6.9
+  - dependency-name: "@nestjs/testing"
+    versions:
+    - 7.6.11
+    - 7.6.12
+    - 7.6.7
+    - 7.6.8
+    - 7.6.9
+  - dependency-name: joi
+    versions:
+    - 17.4.0
+  - dependency-name: "@nestjs/common"
+    versions:
+    - 7.6.11
+    - 7.6.7
+    - 7.6.8
+    - 7.6.9
+  - dependency-name: "@nestjs/core"
+    versions:
+    - 7.6.11
+    - 7.6.7
+    - 7.6.8
+    - 7.6.9
+  - dependency-name: supertest
+    versions:
+    - 6.1.3
