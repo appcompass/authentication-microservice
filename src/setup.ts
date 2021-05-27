@@ -15,23 +15,30 @@ if (error) {
   throw new Error(`validation error: ${error.message}`);
 }
 
+function generateKeyPair() {
+  const passphrase = randomBytes(256 / 8).toString('hex');
+
+  const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+    modulusLength: 4096,
+    publicKeyEncoding: {
+      type: 'spki',
+      format: 'pem'
+    },
+    privateKeyEncoding: {
+      type: 'pkcs8',
+      format: 'pem',
+      cipher: 'aes-256-cbc',
+      passphrase
+    }
+  });
+
+  return { passphrase, publicKey, privateKey };
+}
+
 const commands = {
   'secrets:init': async () => {
-    const passphrase = randomBytes(256 / 8).toString('hex');
+    const { passphrase, publicKey, privateKey } = generateKeyPair();
 
-    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase
-      }
-    });
     const client = vault({
       token: process.env.VAULT_TOKEN
     });
