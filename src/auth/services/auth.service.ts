@@ -80,4 +80,8 @@ export class AuthService {
 
     return { success: true };
   }
+
+  async createToken(payload: Record<string | number | symbol, unknown>) {
+    return await this.jwtService.signAsync(payload);
+  }
 }
