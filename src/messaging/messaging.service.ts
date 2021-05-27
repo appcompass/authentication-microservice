@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { from } from 'rxjs';
+import { firstValueFrom, from } from 'rxjs';
 
 import { Injectable } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
@@ -32,15 +32,15 @@ export class MessagingService {
   }
 
   async sendAsync<R, I>(pattern: string, payload: I) {
-    return this.eventsClient.send<R, I>(pattern, payload).toPromise();
+    return await firstValueFrom(this.send<R, I>(pattern, payload));
   }
 
   emit<R, I>(pattern: string, data: I) {
     return this.eventsClient.emit<R, I>(pattern, data);
   }
 
-  emitAsync<R, I>(pattern: string, data: I) {
-    return this.eventsClient.emit<R, I>(pattern, data).toPromise();
+  async emitAsync<R, I>(pattern: string, data: I) {
+    return await firstValueFrom(this.emit<R, I>(pattern, data));
   }
 
   private async getUrl(pattern: string) {
