@@ -1,14 +1,13 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Get, Logger, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { AuthConfigService } from '../auth-config.service';
-import { AuthenticatedUser } from '../auth.types';
 import { AuthService } from '../services/auth.service';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly authConfigService: AuthConfigService) {}
+  constructor(private readonly logger: Logger, private readonly authService: AuthService) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
@@ -21,20 +20,5 @@ export class AuthController {
   @Get('logout')
   async logout(@Request() req) {
     return await this.authService.logout(req.user);
-  }
-
-  @MessagePattern('authentication.user.login-by-id')
-  async loginUserById(@Payload() userId: number) {
-    return await this.authService.loginById(userId);
-  }
-
-  @EventPattern('authentication.user.logout')
-  async handleUserLogoutEvent(@Payload() payload: AuthenticatedUser) {
-    return await this.authService.logout(payload);
-  }
-
-  @EventPattern('authentication.public-key')
-  sendPublicKey() {
-    return this.authConfigService.publicKey.toString();
   }
 }
