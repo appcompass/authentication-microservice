@@ -1,0 +1,12 @@
+version: '2'
+plugins:
+  eslint:
+    enabled: true
+exclude_patterns:
+  - 'dist/'
+  - '**/node_modules/'
+  - '**/spec/'
+  - '**/test/'
+  - '**/tests/'
+  - '**/vendor/'
+  - '**/*.d.ts'
