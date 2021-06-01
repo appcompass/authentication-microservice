@@ -2,6 +2,8 @@ import { generateKeyPairSync, randomBytes } from 'crypto';
 import * as Joi from 'joi';
 import * as vault from 'node-vault';
 
+import { Transport } from '@nestjs/microservices';
+
 const arg = process.argv[process.argv.length - 1].trim();
 const parsedArg = Object.fromEntries([arg.split(':')]);
 
@@ -51,11 +53,18 @@ const commands = {
         { key: 'secret/service/shared/authenticationServiceHost', value: '0.0.0.0' },
         { key: 'secret/service/shared/authenticationServicePort', value: process.env.SERVICE_PORT || 3000 },
         {
-          key: 'secret/service/authentication/natsUrl',
-          value: process.env.SERVICE_NATS_URL || 'nats://localhost:4222'
+          key: 'secret/service/authentication/interServiceTransportConfig',
+          value:
+            process.env.INTERSERVICE_TRANSPORT_CONFIG ||
+            JSON.stringify({
+              transport: Transport.NATS,
+              options: {
+                url: 'nats://localhost:4222',
+                queue: 'authentication'
+              }
+            })
         },
-        { key: 'secret/service/authentication/natsQueue', value: 'authentication' },
-        { key: 'secret/service/authentication/authExpiresIn', value: 86400 }
+        { key: 'secret/service/authentication/authExpiresIn', value: process.env.AUTH_EXPIRES_IN || 86400 }
       ].map(({ key, value }) => client.write(key, { value }))
     ).then(() => console.log('key pair secrets and config set'));
   }

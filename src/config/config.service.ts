@@ -1,5 +1,7 @@
 import * as Joi from 'joi';
 
+import { ClientOptions } from '@nestjs/microservices';
+
 import { VaultConfig } from './vault.utils';
 
 export type EnvConfig = Record<string, string>;
@@ -12,8 +14,7 @@ export interface ValidConfig {
   npm_package_version: string;
   serviceHost: string;
   servicePort: number;
-  natsUrl: string;
-  natsQueue: string;
+  interServiceTransportConfig: ClientOptions;
   publicKey: string;
   privateKey: string;
   passphrase: string;
@@ -31,8 +32,7 @@ export class ConfigService {
     npm_package_version: Joi.string(),
     serviceHost: Joi.string().default('0.0.0.0'),
     servicePort: Joi.number().default(3000),
-    natsUrl: Joi.string().default('nats://localhost:4222'),
-    natsQueue: Joi.string().default('authentication'),
+    interServiceTransportConfig: Joi.object(),
     publicKey: Joi.string(),
     privateKey: Joi.string(),
     passphrase: Joi.string(),

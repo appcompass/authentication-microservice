@@ -23,14 +23,13 @@ export class VaultConfig {
 
   async getServiceConfig() {
     try {
-      const [publicKey, serviceHost, servicePort, natsUrl, natsQueue, privateKey, passphrase, authExpiresIn] =
+      const [publicKey, serviceHost, servicePort, interServiceTransportConfig, privateKey, passphrase, authExpiresIn] =
         await Promise.all(
           [
             'secret/service/shared/publicKey',
             `secret/service/shared/${this.serviceName}ServiceHost`,
             `secret/service/shared/${this.serviceName}ServicePort`,
-            `secret/service/${this.serviceName}/natsUrl`,
-            `secret/service/${this.serviceName}/natsQueue`,
+            `secret/service/${this.serviceName}/interServiceTransportConfig`,
             `secret/service/${this.serviceName}/privateKey`,
             `secret/service/${this.serviceName}/passphrase`,
             `secret/service/${this.serviceName}/authExpiresIn`
@@ -40,8 +39,7 @@ export class VaultConfig {
         serviceHost,
         servicePort,
         publicKey,
-        natsUrl,
-        natsQueue,
+        interServiceTransportConfig: JSON.parse(interServiceTransportConfig),
         privateKey,
         passphrase,
         authExpiresIn
