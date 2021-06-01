@@ -2,7 +2,7 @@ import * as vault from 'node-vault';
 
 export class VaultConfig {
   private client: vault.client;
-  constructor(private serviceName: string = 'authentication') {
+  constructor(private serviceName: string) {
     this.client = vault({
       token: process.env.VAULT_TOKEN
     });

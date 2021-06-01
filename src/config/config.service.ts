@@ -22,7 +22,7 @@ export interface ValidConfig {
 }
 
 export class ConfigService {
-  private readonly config: ValidConfig;
+  private config: ValidConfig;
   public vault: VaultConfig;
   private schema: Joi.ObjectSchema = Joi.object({
     NODE_ENV: Joi.string().default('local'),
@@ -39,9 +39,12 @@ export class ConfigService {
     authExpiresIn: Joi.number()
   }).options({ stripUnknown: true });
 
-  constructor(config: EnvConfig) {
+  async setConfigFromVault() {
+    this.vault = new VaultConfig(process.env.npm_package_name);
+    const config: EnvConfig = await this.vault.getServiceConfig();
     this.config = this.validate({ ...process.env, ...config });
-    this.vault = new VaultConfig();
+
+    return this;
   }
 
   private validate(config: EnvConfig): ValidConfig {

@@ -1,14 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 
 import { ConfigService } from './config.service';
-import { VaultConfig } from './vault.utils';
 
 @Global()
 @Module({
   providers: [
     {
       provide: ConfigService,
-      useFactory: async () => new ConfigService(await new VaultConfig().getServiceConfig())
+      useFactory: async () => await new ConfigService().setConfigFromVault()
     }
   ],
   exports: [ConfigService]
