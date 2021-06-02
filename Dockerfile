@@ -1,4 +1,4 @@
-FROM node:12 as builder
+FROM node:14 as builder
 WORKDIR /app
 COPY ./package*.json ./
 RUN npm install
@@ -6,7 +6,7 @@ RUN npm rebuild bcrypt --build-from-source
 COPY . .
 RUN npm run build
 
-FROM node:12-alpine
+FROM node:14-alpine
 WORKDIR /app
 COPY --from=builder /app .
 
