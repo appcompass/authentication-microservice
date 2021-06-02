@@ -14,14 +14,14 @@ export class InterServiceController {
     return await this.authService.loginById(userId);
   }
 
+  @MessagePattern('authentication.token.create')
+  async createToken(@Payload() payload: Record<string | number | symbol, unknown>) {
+    return await this.authService.createToken(payload);
+  }
+
   @EventPattern('authentication.user.logout')
   async handleUserLogoutEvent(@Payload() payload: AuthenticatedUser) {
     return await this.authService.logout(payload);
-  }
-
-  @EventPattern('authentication.token.create')
-  async createToken(@Payload() payload: Record<string | number | symbol, unknown>) {
-    return await this.authService.createToken(payload);
   }
 
   @EventPattern('authentication.public-key')
