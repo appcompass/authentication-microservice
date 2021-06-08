@@ -37,9 +37,9 @@ export class AuthService {
     } else return null;
   }
 
-  async loginById(id: number) {
+  async loginBy(payload: Partial<{ id: number; email: string }>) {
     const user: AuthenticatedUser = await this.messagingService.sendAsync('users.user.find-by', {
-      id,
+      ...payload,
       active: true
     });
     if (!user || !user.id) return null;

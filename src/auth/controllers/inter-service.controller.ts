@@ -10,8 +10,13 @@ export class InterServiceController {
   constructor(private readonly authService: AuthService, private readonly authConfigService: AuthConfigService) {}
 
   @MessagePattern('authentication.user.login-by-id')
-  async loginUserById(@Payload() userId: number) {
-    return await this.authService.loginById(userId);
+  async loginUserById(@Payload() id: number) {
+    return await this.authService.loginBy({ id });
+  }
+
+  @MessagePattern('authentication.user.login-by-email')
+  async loginUserByEmail(@Payload() email: string) {
+    return await this.authService.loginBy({ email });
   }
 
   @MessagePattern('authentication.token.create')
