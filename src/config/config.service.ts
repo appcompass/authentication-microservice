@@ -6,6 +6,18 @@ import { VaultConfig } from './vault.utils';
 
 export type EnvConfig = Record<string, string>;
 
+export interface AppConfig {
+  rateLimit: {
+    windowMs?: number;
+    max?: number;
+    message?: string;
+    statusCode?: number;
+    headers?: boolean;
+    skipFailedRequests?: boolean;
+    skipSuccessfulRequests?: boolean;
+  };
+}
+
 export interface ValidConfig {
   NODE_ENV: string;
   PWD: string;
@@ -14,6 +26,7 @@ export interface ValidConfig {
   npm_package_version: string;
   serviceHost: string;
   servicePort: number;
+  appConfig: AppConfig;
   interServiceTransportConfig: ClientOptions;
   publicKey: string;
   privateKey: string;
@@ -32,6 +45,7 @@ export class ConfigService {
     npm_package_version: Joi.string(),
     serviceHost: Joi.string().default('0.0.0.0'),
     servicePort: Joi.number().default(3000),
+    appConfig: Joi.object(),
     interServiceTransportConfig: Joi.object(),
     publicKey: Joi.string(),
     privateKey: Joi.string(),

@@ -53,16 +53,22 @@ const commands = {
         { key: 'secret/service/shared/authenticationServiceHost', value: '0.0.0.0' },
         { key: 'secret/service/shared/authenticationServicePort', value: process.env.SERVICE_PORT || 3000 },
         {
+          key: 'secret/service/authentication/appConfig',
+          value: process.env.APP_CONFIG || {
+            rateLimit: {
+              max: 0
+            }
+          }
+        },
+        {
           key: 'secret/service/authentication/interServiceTransportConfig',
-          value:
-            process.env.INTERSERVICE_TRANSPORT_CONFIG ||
-            JSON.stringify({
-              transport: Transport.NATS,
-              options: {
-                url: 'nats://localhost:4222',
-                queue: 'authentication'
-              }
-            })
+          value: process.env.INTERSERVICE_TRANSPORT_CONFIG || {
+            transport: Transport.NATS,
+            options: {
+              url: 'nats://localhost:4222',
+              queue: 'authentication'
+            }
+          }
         },
         { key: 'secret/service/authentication/authExpiresIn', value: process.env.AUTH_EXPIRES_IN || 86400 }
       ].map(({ key, value }) => client.write(key, { value }))

@@ -14,7 +14,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { ConfigService } from './config/config.service';
+import { AppConfig, ConfigService } from './config/config.service';
 import { MessagingConfigService } from './messaging/messaging.config';
 
 Error.stackTraceLimit = Infinity;
@@ -26,7 +26,7 @@ async function createApp() {
   return app;
 }
 
-function applyValidators(app) {
+function applyValidators(app: NestExpressApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -38,12 +38,12 @@ function applyValidators(app) {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 }
 
-async function addSwaggerDocs(app) {
+async function addSwaggerDocs(app: NestExpressApplication, serviceName: string) {
   const options = new DocumentBuilder()
     .setTitle('AppCompass Authentication Service')
     .setDescription('A microservice for the AppCompass Web Application Platform')
     .setVersion('1.0')
-    .addTag('Authentication')
+    .addTag(serviceName)
     .build();
   const document = SwaggerModule.createDocument(app, options);
   const redocOptions: RedocOptions = {
@@ -55,36 +55,33 @@ async function addSwaggerDocs(app) {
   await RedocModule.setup('/docs', app, document, redocOptions);
 }
 
-function applySecurity(app) {
+function applySecurity(app: NestExpressApplication, appConfig: AppConfig) {
   app.enableCors();
 
   app.use(helmet());
-  app.use(
-    rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: 100
-    })
-  );
+  app.use(rateLimit(appConfig.rateLimit));
 }
 
-async function startApp(app) {
-  const configService = app.get(ConfigService);
+async function startApp(app: NestExpressApplication, servicePort: number) {
   const messagingConfigService = app.get(MessagingConfigService);
-
   app.connectMicroservice(messagingConfigService.eventsConfig);
 
   await app.startAllMicroservicesAsync();
-  await app.listen(configService.get('servicePort'));
+  await app.listen(servicePort);
 }
 
 async function bootstrap() {
   const app = await createApp();
+  const configService = app.get(ConfigService);
+  const serviceName = configService.get('npm_package_name');
+  const appConfig = configService.get('appConfig');
+  const servicePort = configService.get('servicePort');
 
   applyValidators(app);
-  await addSwaggerDocs(app);
-  applySecurity(app);
+  await addSwaggerDocs(app, serviceName);
+  applySecurity(app, appConfig);
 
-  await startApp(app);
+  await startApp(app, servicePort);
 }
 
 bootstrap();

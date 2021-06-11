@@ -23,29 +23,48 @@ export class VaultConfig {
 
   async getServiceConfig() {
     try {
-      const [publicKey, serviceHost, servicePort, interServiceTransportConfig, privateKey, passphrase, authExpiresIn] =
-        await Promise.all(
-          [
-            'secret/service/shared/publicKey',
-            `secret/service/shared/${this.serviceName}ServiceHost`,
-            `secret/service/shared/${this.serviceName}ServicePort`,
-            `secret/service/${this.serviceName}/interServiceTransportConfig`,
-            `secret/service/${this.serviceName}/privateKey`,
-            `secret/service/${this.serviceName}/passphrase`,
-            `secret/service/${this.serviceName}/authExpiresIn`
-          ].map((path) => this.client.read(path).then(({ data }) => data.value))
-        );
-      return {
+      const [
+        publicKey,
         serviceHost,
         servicePort,
+        appConfig,
+        interServiceTransportConfig,
+        privateKey,
+        passphrase,
+        authExpiresIn
+      ] = await Promise.all(
+        [
+          'secret/service/shared/publicKey',
+          `secret/service/shared/${this.serviceName}ServiceHost`,
+          `secret/service/shared/${this.serviceName}ServicePort`,
+          `secret/service/${this.serviceName}/appConfig`,
+          `secret/service/${this.serviceName}/interServiceTransportConfig`,
+          `secret/service/${this.serviceName}/privateKey`,
+          `secret/service/${this.serviceName}/passphrase`,
+          `secret/service/${this.serviceName}/authExpiresIn`
+        ].map((path) =>
+          this.client.read(path).then(({ data }) => {
+            try {
+              return JSON.parse(data.value);
+            } catch (error) {
+              return data.value;
+            }
+          })
+        )
+      );
+      return {
         publicKey,
-        interServiceTransportConfig: JSON.parse(interServiceTransportConfig),
+        serviceHost,
+        servicePort,
+        appConfig,
+        interServiceTransportConfig,
         privateKey,
         passphrase,
         authExpiresIn
       };
     } catch (error) {
-      throw Error(error.response.body.warnings);
+      console.error(error);
+      return {};
     }
   }
 }
