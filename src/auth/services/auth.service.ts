@@ -47,7 +47,7 @@ export class AuthService {
       userId: user.id
     });
 
-    return this.login(user);
+    return await this.login(user);
   }
 
   async login(user: AuthenticatedUser) {
