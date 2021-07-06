@@ -1,5 +1,7 @@
 # AppCompass Authentication Service
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/383d7162338e4b28ffc4/maintainability)](https://codeclimate.com/github/appcompass/authentication-microservice/maintainability)
+
 ## Description
 
 AppCompass Authentication Service provides authentication, token signing, and token verification resources to a platform that uses this service's interface contract for use.
