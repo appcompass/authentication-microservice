@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           npm ci
-          npm test
+          npm test:unit
   e2e-tests:
     name: 🧪 E2E Tests Test
     runs-on: ubuntu-latest

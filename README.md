@@ -1,6 +1,7 @@
 # AppCompass Authentication Service
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/383d7162338e4b28ffc4/maintainability)](https://codeclimate.com/github/appcompass/authentication-microservice/maintainability)
+![example workflow](https://github.com/appcompass/authentication-microservice/actions/workflows/code-quality-and-tests.yml/badge.svg?branch=main)
 
 ## Description
 
