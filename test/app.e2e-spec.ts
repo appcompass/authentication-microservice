@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppController } from '../src/app.controller';
 import { AppService } from '../src/app.service';
-import { AppServiceMock } from '../src/app.service.mock';
+import { AppServiceMock } from './app.service.mock';
 
 // TODO: Update to mock backend services, not app functionality.
 describe('AppController (e2e)', () => {
@@ -31,8 +31,5 @@ describe('AppController (e2e)', () => {
       gitHash: 'testGitHash',
       serviceName: 'testServiceName',
       version: 'testVersion'
-      // serviceName: 'authentication-microservice',
-      // gitHash: 'test',
-      // version: '0.0.0'
     }));
 });
