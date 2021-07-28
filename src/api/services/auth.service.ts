@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { MessagingService } from '../../messaging/messaging.service';
-import { AuthenticatedUser, DecodedToken } from '../auth.types';
+import { AuthenticatedUser } from '../auth.types';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +38,13 @@ export class AuthService {
   }
 
   async loginBy(payload: Partial<{ id: number; email: string }>) {
+    const user = await this.buildUserTokenObject(payload);
+    if (!user) return null;
+
+    return await this.login(user);
+  }
+
+  async buildUserTokenObject(payload: Partial<{ id: number; email: string }>) {
     const user: AuthenticatedUser = await this.messagingService.sendAsync('users.user.find-by', {
       ...payload,
       active: true
@@ -47,34 +54,69 @@ export class AuthService {
       userId: user.id
     });
 
-    return await this.login(user);
+    return user;
+  }
+
+  async generateRefreshToken(user: AuthenticatedUser) {
+    const { id } = user;
+    return await this.jwtService.signAsync({
+      sub: id,
+      type: 'refresh'
+    });
+  }
+
+  async generateAccessToken(user: AuthenticatedUser) {
+    const { id, email, lastLogin, permissions } = user;
+    return await this.jwtService.signAsync(
+      {
+        id,
+        permissions,
+        email,
+        lastLogin,
+        sub: id,
+        type: 'access'
+      },
+      {
+        expiresIn: 60 * 15
+      }
+    );
+  }
+
+  async generateAccessTokenById(id: number) {
+    const user = await this.buildUserTokenObject({ id });
+    if (!user) return null;
+    return await this.generateAccessToken(user);
+  }
+
+  async generateRefreshTokenById(id: number) {
+    const user: AuthenticatedUser = await this.messagingService.sendAsync('users.user.find-by', {
+      id,
+      active: true
+    });
+
+    if (!user || !user.id) return null;
+    return await this.generateRefreshToken(user);
   }
 
   async login(user: AuthenticatedUser) {
-    const { id, email, lastLogin, permissions } = user;
-    const token = await this.jwtService.signAsync({
-      id,
-      permissions,
-      email,
-      lastLogin,
-      sub: id
+    const [refreshToken, accessToken] = await Promise.all([
+      this.generateRefreshToken(user),
+      this.generateAccessToken(user)
+    ]);
+
+    await this.messagingService.sendAsync('users.user.update', {
+      id: user.id,
+      lastLogin: moment()
     });
-    const decodedToken = this.jwtService.decode(token) as DecodedToken;
-    const payload = {
-      id,
-      lastLogin: moment(),
-      tokenExpiration: moment.unix(decodedToken.exp)
-    };
-    await this.messagingService.sendAsync('users.user.update', payload);
-    this.logger.log(`Login from User Id: ${id}`);
-    return { token };
+    this.logger.log(`Login from User Id: ${user.id}`);
+    return { refreshToken, accessToken };
   }
 
   async logout(user: AuthenticatedUser) {
     const { id } = user;
     await this.messagingService.sendAsync('users.user.update', {
       id,
-      tokenExpiration: moment()
+      lastLogout: moment()
     });
     this.logger.log(`Logout from User Id: ${id}`);
 
