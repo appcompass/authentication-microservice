@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
 
-import { Injectable, Logger } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { MessagingService } from '../../messaging/messaging.service';
@@ -12,7 +12,7 @@ export class AuthService {
   private saltRounds = 10;
 
   constructor(
-    private readonly logger: Logger,
+    private readonly logger: ConsoleLogger,
     private readonly messagingService: MessagingService,
     private readonly jwtService: JwtService
   ) {

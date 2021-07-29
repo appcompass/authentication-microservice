@@ -1,16 +1,15 @@
 import { useContainer } from 'class-validator';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
-import { RedocModule, RedocOptions } from 'nestjs-redoc';
 
 import {
   ClassSerializerInterceptor,
+  INestApplication,
   UnprocessableEntityException,
   ValidationError,
   ValidationPipe
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -20,13 +19,13 @@ import { MessagingConfigService } from './messaging/messaging.config';
 Error.stackTraceLimit = Infinity;
 
 async function createApp() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   return app;
 }
 
-function applyValidators(app: NestExpressApplication) {
+function applyValidators(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -38,7 +37,7 @@ function applyValidators(app: NestExpressApplication) {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 }
 
-async function addSwaggerDocs(app: NestExpressApplication, serviceName: string) {
+async function addSwaggerDocs(app: INestApplication, serviceName: string) {
   const options = new DocumentBuilder()
     .setTitle('AppCompass Authentication Service')
     .setDescription('A microservice for the AppCompass Web Application Platform')
@@ -46,27 +45,22 @@ async function addSwaggerDocs(app: NestExpressApplication, serviceName: string) 
     .addTag(serviceName)
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  const redocOptions: RedocOptions = {
-    sortPropsAlphabetically: true,
-    hideDownloadButton: false,
-    hideHostname: false
-  };
 
-  await RedocModule.setup('/docs', app, document, redocOptions);
+  SwaggerModule.setup('docs', app, document);
 }
 
-function applySecurity(app: NestExpressApplication, appConfig: AppConfig) {
+function applySecurity(app: INestApplication, appConfig: AppConfig) {
   app.enableCors();
 
   app.use(helmet());
   app.use(rateLimit(appConfig.rateLimit));
 }
 
-async function startApp(app: NestExpressApplication, servicePort: number) {
+async function startApp(app: INestApplication, servicePort: number) {
   const messagingConfigService = app.get(MessagingConfigService);
   app.connectMicroservice(messagingConfigService.eventsConfig);
 
-  await app.startAllMicroservicesAsync();
+  await app.startAllMicroservices();
   await app.listen(servicePort);
 }
 
