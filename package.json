@@ -24,6 +24,8 @@
     "start:prod": "node dist/main",
     "setup:secrets": "ts-node src/setup.ts secrets:init",
     "setup:db": "echo 'no db required for this service'",
+    "image:build": "docker build . --file Dockerfile --tag appcompass/authentication-service:latest",
+    "image:push": "docker push appcompass/authentication-service:latest",
     "deps:check": "depcruise --validate .dependency-cruiser.json src",
     "test": "jest",
     "test:unit": "jest --config ./test/jest-unit.json",
