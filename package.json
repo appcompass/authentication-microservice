@@ -48,7 +48,7 @@
     "class-validator": "^0.13.1",
     "express-rate-limit": "^5.3.0",
     "helmet": "^4.6.0",
-    "joi": "^17.4.1",
+    "joi": "^17.4.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "nats": "^2.1.0",
