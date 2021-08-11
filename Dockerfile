@@ -6,7 +6,7 @@ RUN npm rebuild bcrypt --build-from-source
 COPY . .
 RUN npm run build
 
-FROM node:14-alpine
+FROM node:14
 WORKDIR /app
 COPY --from=builder /app .
 
