@@ -68,7 +68,7 @@
     "@types/express-serve-static-core": "^4.17.24",
     "@types/jest": "^26.0.24",
     "@types/joi": "^17.2.2",
-    "@types/node": "^16.4.13",
+    "@types/node": "^16.7.4",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.11",
