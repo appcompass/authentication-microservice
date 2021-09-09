@@ -50,7 +50,7 @@ async function addSwaggerDocs(app: INestApplication, serviceName: string) {
 }
 
 function applySecurity(app: INestApplication, appConfig: AppConfig) {
-  app.enableCors();
+  app.enableCors(appConfig.corsOptions);
 
   app.use(helmet());
   app.use(rateLimit(appConfig.rateLimit));
@@ -71,9 +71,9 @@ async function bootstrap() {
   const appConfig = configService.get('appConfig');
   const servicePort = configService.get('servicePort');
 
+  applySecurity(app, appConfig);
   applyValidators(app);
   await addSwaggerDocs(app, serviceName);
-  applySecurity(app, appConfig);
 
   await startApp(app, servicePort);
 }
