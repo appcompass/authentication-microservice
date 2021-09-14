@@ -17,6 +17,7 @@ export type AuthenticatedUser = {
   activationCode: string;
   activatedAt: string;
   lastLogin: string;
+  lastLogout: string;
   tokenExpiration: string;
   createdAt: string;
   updatedAt: string;
