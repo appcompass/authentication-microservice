@@ -1,6 +1,7 @@
 FROM node:14 as builder
 WORKDIR /app
 COPY ./package*.json ./
+RUN npm install npm -g
 RUN npm install
 RUN npm rebuild bcrypt --build-from-source
 COPY . .
@@ -9,6 +10,7 @@ RUN npm run build
 FROM node:14
 WORKDIR /app
 COPY --from=builder /app .
+RUN apt-get update && apt-get install sudo -y
 RUN npm install pm2 -g
 
 ARG VAULT_ADDR="http://127.0.0.1:8200"
