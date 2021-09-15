@@ -21,7 +21,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "pm2-runtime dist/main.js",
     "setup:secrets": "ts-node src/setup.ts secrets:init",
     "setup:db": "echo 'no db required for this service'",
     "image:build": "docker build . --file Dockerfile --tag appcompass/authentication-service:latest",
