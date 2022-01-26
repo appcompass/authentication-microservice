@@ -1,13 +1,4 @@
 export SERVICE_PORT=3000
 export AUTH_EXPIRES_IN=86400
+export PUBLIC_KEY='foobar'
 export INTERSERVICE_TRANSPORT_CONFIG='{"transport": 2,"options": {"url": "nats://localhost:4222","queue": "authentication"}}'
-export VAULT_ADDR=http://127.0.0.1:8200
-export VAULT_TOKEN=mytoken
-
-nvmrc=~/.nvm/nvm.sh
-if [ -e $nvmrc ]; then
-  source $nvmrc
-  nvm use 14.17.6
-fi
-
-PATH_add node_modules/.bin

@@ -15,26 +15,17 @@ export class AuthConfigService implements JwtOptionsFactory {
     return {
       publicKey: this.publicKey,
       privateKey: {
-        key: this.privateKey,
-        passphrase: this.passphrase
+        key: this.configService.get('PRIVATE_KEY'),
+        passphrase: this.configService.get('PASSPHRASE')
       },
       signOptions: {
         algorithm: 'RS512',
-        expiresIn: this.expiresIn
+        expiresIn: this.configService.get('AUTH_EXPIRES_IN')
       }
     };
   }
 
   get publicKey() {
-    return this.configService.get('publicKey');
-  }
-  get privateKey() {
-    return this.configService.get('privateKey');
-  }
-  get passphrase() {
-    return this.configService.get('passphrase');
-  }
-  get expiresIn() {
-    return this.configService.get('authExpiresIn');
+    return this.configService.get('PUBLIC_KEY');
   }
 }

@@ -1,6 +1,6 @@
 import { generateKeyPairSync, randomBytes } from 'crypto';
+import { writeFileSync } from 'fs';
 import * as Joi from 'joi';
-import * as vault from 'node-vault';
 
 import { Transport } from '@nestjs/microservices';
 
@@ -8,7 +8,7 @@ const arg = process.argv[process.argv.length - 1].trim();
 const parsedArg = Object.fromEntries([arg.split(':')]);
 
 const validator = Joi.object({
-  secrets: Joi.string().valid('init')
+  setup: Joi.string().valid('secrets')
 });
 
 const { error } = validator.validate({ ...parsedArg });
@@ -38,41 +38,38 @@ function generateKeyPair() {
 }
 
 const commands = {
-  'secrets:init': async () => {
+  'setup:secrets': async () => {
     const { passphrase, publicKey, privateKey } = generateKeyPair();
-
-    const client = vault({
-      token: process.env.VAULT_TOKEN
+    const appConfig = JSON.stringify({
+      rateLimit: {
+        max: 0
+      }
     });
-
-    return await Promise.all(
-      [
-        { key: 'secret/service/shared/publicKey', value: publicKey },
-        { key: 'secret/service/authentication/privateKey', value: privateKey },
-        { key: 'secret/service/authentication/passphrase', value: passphrase },
-        { key: 'secret/service/shared/authenticationServiceHost', value: '0.0.0.0' },
-        { key: 'secret/service/shared/authenticationServicePort', value: process.env.SERVICE_PORT || 3000 },
-        {
-          key: 'secret/service/authentication/appConfig',
-          value: process.env.APP_CONFIG || {
-            rateLimit: {
-              max: 0
-            }
-          }
-        },
-        {
-          key: 'secret/service/authentication/interServiceTransportConfig',
-          value: process.env.INTERSERVICE_TRANSPORT_CONFIG || {
-            transport: Transport.NATS,
-            options: {
-              servers: ['nats://localhost:4222'],
-              queue: 'authentication'
-            }
-          }
-        },
-        { key: 'secret/service/authentication/authExpiresIn', value: process.env.AUTH_EXPIRES_IN || 86400 }
-      ].map(({ key, value }) => client.write(key, { value }))
-    ).then(() => console.log('key pair secrets and config set'));
+    const interServiceTransportConfig = JSON.stringify({
+      transport: Transport.NATS,
+      options: {
+        servers: ['nats://localhost:4222'],
+        queue: 'authentication'
+      }
+    });
+    try {
+      writeFileSync(
+        '.envrc',
+        `
+export SERVICE_NAME=authentication
+export SERVICE_PORT=3000
+export ENV=local
+export AUTH_EXPIRES_IN=86400
+export PUBLIC_KEY=${JSON.stringify(publicKey)}
+export PRIVATE_KEY=${JSON.stringify(privateKey)}
+export PASSPHRASE='${passphrase}'
+export APP_CONFIG='${appConfig}'
+export INTERSERVICE_TRANSPORT_CONFIG='${interServiceTransportConfig}'
+`
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 

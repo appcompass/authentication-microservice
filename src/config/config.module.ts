@@ -4,12 +4,7 @@ import { ConfigService } from './config.service';
 
 @Global()
 @Module({
-  providers: [
-    {
-      provide: ConfigService,
-      useFactory: async () => await new ConfigService().setConfigFromVault()
-    }
-  ],
+  providers: [ConfigService],
   exports: [ConfigService]
 })
 export class ConfigModule {}

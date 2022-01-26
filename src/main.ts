@@ -1,5 +1,4 @@
 import { useContainer } from 'class-validator';
-import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 
 import {
@@ -15,6 +14,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AppConfig, ConfigService } from './config/config.service';
 import { MessagingConfigService } from './messaging/messaging.config';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const rateLimit = require('express-rate-limit');
 
 Error.stackTraceLimit = Infinity;
 
@@ -52,7 +54,22 @@ async function addSwaggerDocs(app: INestApplication, serviceName: string) {
 function applySecurity(app: INestApplication, appConfig: AppConfig) {
   app.enableCors(appConfig.corsOptions);
 
-  app.use(helmet());
+  app.use(helmet.contentSecurityPolicy());
+  app.use(helmet.crossOriginEmbedderPolicy());
+  app.use(helmet.crossOriginOpenerPolicy());
+  app.use(helmet.crossOriginResourcePolicy());
+  app.use(helmet.dnsPrefetchControl());
+  app.use(helmet.expectCt());
+  app.use(helmet.frameguard());
+  app.use(helmet.hidePoweredBy());
+  app.use(helmet.hsts());
+  app.use(helmet.ieNoOpen());
+  app.use(helmet.noSniff());
+  app.use(helmet.originAgentCluster());
+  app.use(helmet.permittedCrossDomainPolicies());
+  app.use(helmet.referrerPolicy());
+  app.use(helmet.xssFilter());
+
   app.use(rateLimit(appConfig.rateLimit));
 }
 
@@ -67,9 +84,9 @@ async function startApp(app: INestApplication, servicePort: number) {
 async function bootstrap() {
   const app = await createApp();
   const configService = app.get(ConfigService);
-  const serviceName = configService.get('npm_package_name');
-  const appConfig = configService.get('appConfig');
-  const servicePort = configService.get('servicePort');
+  const serviceName = configService.get('SERVICE_NAME');
+  const appConfig = configService.get('APP_CONFIG');
+  const servicePort = configService.get('SERVICE_PORT');
 
   applySecurity(app, appConfig);
   applyValidators(app);
