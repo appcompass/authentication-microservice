@@ -1,7 +1,7 @@
 FROM node:16 as builder
 WORKDIR /app
 COPY ./package*.json ./
-RUN npm install npm node-gyp -g
+RUN npm install npm node-gyp @nestjs/cli -g
 RUN npm install --production
 RUN npm rebuild bcrypt --build-from-source
 COPY . .
